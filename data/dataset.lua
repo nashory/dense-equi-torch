@@ -378,10 +378,12 @@ end
 function dataset:getim(iid)
 	dataTable = {}
 	scalarTable = {}
+	
 	local imgpath = ffi.string(torch.data(self.imagePath[iid]))
 	local out = self:sampleHookTrain(imgpath)
 	table.insert(dataTable, out)
 	table.insert(scalarTable, self.imageClass[iid])
+	
 	local data, scalarLabels = tableToOutput(self, dataTable, scalarTable)
 	return data, scalarLabels
 end

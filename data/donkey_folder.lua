@@ -35,7 +35,7 @@ local trainCache = paths.concat(cache, cache_prefix .. '_trainCache.t7')
 --------------------------------------------------------------------------------------------
 local nc = opt.nc
 local loadSize   = {nc, opt.loadSize}
-local sampleSize = {nc, opt.loadSize}
+local sampleSize = {nc, opt.sampleSize}
 
 local function loadImage(path)
    local input = image.load(path, nc, 'float')
