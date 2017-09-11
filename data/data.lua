@@ -2,7 +2,7 @@
     This data loader is a modified version of the one from dcgan.torch
     (see https://github.com/soumith/dcgan.torch/blob/master/data/data.lua).
     
-    Copyright (c) 2017, Minchul Shin
+    Copyright (c) 2016, Deepak Pathak [See LICENSE file for details]
 ]]--
 
 local Threads = require 'threads'
@@ -51,6 +51,11 @@ function data.new(n, opt_)
    self.threads:synchronize()
    self._size = nSamples
 
+   for i = 1, n do
+      self.threads:addjob(self._getFromThreads,
+                          self._pushResult)
+   end
+
    return self
 end
 
@@ -67,14 +72,6 @@ function data._pushResult(...)
    result[1] = res
 end
 
-function data._getFromThreadsByClass(targetclass)
-   assert(opt.batchSize, 'opt.batchSize not found')
-   return trainLoader:sampleByClass(opt.batchSize, targetclass)
-end
-
-function data._getim(iid)
-	return trainLoader:getim(iid)
-end
 
 
 function data:getBatch()
@@ -89,34 +86,6 @@ function data:getBatch()
    print(type(res))
    return res
 end
-
-
-function data:getBatchByClass(class)
-   -- queue another job
-   self.threads:addjob(self._getFromThreadsByClass, self._pushResult, class)
-   self.threads:dojob()
-   local res = result[1]
-   result[1] = nil
-   if torch.type(res) == 'table' then
-      return unpack(res)
-   end
-   print(type(res))
-   return res
-end
-
-function data:getim(iid)
-   -- queue another job
-   self.threads:addjob(self._getim, self._pushResult, iid)
-   self.threads:dojob()
-   local res = result[1]
-   result[1] = nil
-   if torch.type(res) == 'table' then
-      return unpack(res)
-   end
-   print(type(res))
-   return res
-end
-
 
 function data:size()
    return self._size

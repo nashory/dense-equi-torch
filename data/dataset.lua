@@ -344,19 +344,6 @@ function dataset:sample(quantity)
    return data, scalarLabels
 end
 
-function dataset:sampleByClass(quantity, class)
-   assert(quantity)
-   local dataTable = {}
-   local scalarTable = {}
-   for i=1,quantity do
-      local out = self:getByClass(class)
-      table.insert(dataTable, out)
-      table.insert(scalarTable, class)
-   end
-   local data, scalarLabels = tableToOutput(self, dataTable, scalarTable)
-   return data, scalarLabels
-end
-
 function dataset:get(i1, i2)
    local indices = torch.range(i1, i2);
    local quantity = i2 - i1 + 1;
@@ -373,19 +360,6 @@ function dataset:get(i1, i2)
    end
    local data, scalarLabels = tableToOutput(self, dataTable, scalarTable)
    return data, scalarLabels
-end
-
-function dataset:getim(iid)
-	dataTable = {}
-	scalarTable = {}
-	
-	local imgpath = ffi.string(torch.data(self.imagePath[iid]))
-	local out = self:sampleHookTrain(imgpath)
-	table.insert(dataTable, out)
-	table.insert(scalarTable, self.imageClass[iid])
-	
-	local data, scalarLabels = tableToOutput(self, dataTable, scalarTable)
-	return data, scalarLabels
 end
 
 return dataset

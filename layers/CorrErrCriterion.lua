@@ -48,8 +48,9 @@ function CorrErrCriterion:updateOutput(input)
 	
 	-- forward DensCorrDistLoss
 	self.loss = self.model:forward(self.batch)
+	--local avgloss = self.loss:clone():sum()/(self.batchsize*self.L*self.W)
 	
-	return self.loss	
+	return self.loss
 end
 
 function CorrErrCriterion:updateGradInput(input, gradOutput)
