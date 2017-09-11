@@ -82,7 +82,7 @@ Trainer['fDx'] = function(self)
 	-- prepare input
 	self.x = self.dataset:getBatch()
 	self.g, self.g_adj = self:getTPS()
-	self.x_tilde = self:applyWarp(self.x, self.g)
+	self.x_tilde = self:applyWarp(self.x:float(), self.g:float())
 	-- forward and backward
 	local output = self.model:forward({self.x:cuda(), self.x_tilde:cuda()})
 	local loss = self.criterion:forward({output[1], output[2], self.g_adj:cuda()})
@@ -110,7 +110,6 @@ function Trainer:train(epoch, loader)
 	local timer = torch.Timer()			-- timer starts to count now.
 	local totalIter = 0
 	local loss_his = {}
-	local iter_his = {}
 
 	-- do training.
 	for e = 1, epoch do
@@ -135,11 +134,23 @@ function Trainer:train(epoch, loader)
 			local log_msg = string.format('Epoch: [%d][%6d/%6d]\tLoss: %.4f\tTime elpase: %.1f(min)', e, iter, iter_per_epoch, loss, timer:time().real/60.0)
 			print(log_msg)
 			
-
-			-- display.
-
-
-
+			-- display(iamge, plot).
+			if self.opt.display then
+				-- image.
+				local im = self.x:clone()
+				local im_tilde = self.x_tilde:clone()
+				self.disp.image(im, {win=self.opt.display_id+self.opt.gpuid, title=self.opt.server_name})
+				self.disp.image(im_tilde, {win=self.opt.display_id*5+self.opt.gpuid, title=self.opt.server_name})
+				-- plot.
+				local range = 10000
+				local start = 1
+				local last = totalIter/self.opt.display_iter
+				if totalIter <= range then start = 1
+				elseif totalIter > range then start = totalIter-range end
+				table.insert(loss_his, {totalIter, loss})
+				if #loss_his > range then table.remove(loss_his, 1) end
+				self.disp.plot(loss_his, {labels={'Iter', string.format('loss(gpu:%d)', self.opt.gpuid)}, win=string.format('loss(gpu:%d)', self.opt.gpuid)})
+			end
 		end
 	end
 end

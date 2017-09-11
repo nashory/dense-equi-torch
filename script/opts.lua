@@ -29,6 +29,7 @@ function M.parse(arg)
 	---------------- Display server -----------------
 	cmd:option('-display', true, 'true: display server on / false: off')
 	cmd:option('-display_id', 5, 'display window id')
+	cmd:option('-display_iter', 10, 'display every xx iter.')
 	cmd:option('-display_server_ip', '10.64.81.227', 'host server ip')
 	cmd:option('-display_server_port', '8000', 'host server port number')
 	cmd:option('-display_server_name', 'nashory', 'server name.')

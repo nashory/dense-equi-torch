@@ -6,7 +6,6 @@
 require 'torch'
 require 'optim'
 require 'nn'
-require 'layers.DataLoader'
 require 'script.trainer'
 local opts = require 'script.opts'
 local net = require 'models.simple_conv'

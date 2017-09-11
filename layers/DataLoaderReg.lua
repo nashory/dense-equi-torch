@@ -115,15 +115,6 @@ function DataLoaderReg:adjust_anno(anno, warp)
 	local offset = (self.imsize - self.cropsize)/2
 	anno:csub(offset)
 	
-	-- adjust warp (uncomment this when nobias version is used.)
-	--for i = 1, 10, 2 do
-	--	anno[{i}] = anno[{i}] - warp[{2, anno[{i+1}], anno[{i}]}]
-	--	anno[{i+1}] = anno[{i+1}] - warp[{1, anno[{i+1}], anno[{i}]}]
-	--end
-
-	-- rescale (ratio = 1.0)
-	--anno:div(self.cropsize)
-
 	return anno
 end
 
@@ -145,29 +136,6 @@ function DataLoaderReg:get_batch(batchsize)
 		local idx2 = math.random(1,self.dbsize)
 		table.insert(iid_list, iid)
 
-	--[[
-		-- no bias ver.
-		local im = self:load_im(iid)
-		local anno = self:load_anno(iid)
-		im = self:transform(im)
-		im1, warpfield1 = self:warp(im, idx1)
-		im2, warpfield2 = self:warp(im1, idx2)
-		anno = self:adjust_anno(anno, warpfield1)
-		batch1[{k, {}, {}, {}}] = im1
-		batch2[{k, {}, {}, {}}] = im2
-		g_matrix[{k, {}, {}}] = image.scale(warpfield2, 40, 40):div(2)
-		annotation[{k, {}}] = anno
-	]]--
-		--[[
-		-- test
-		local display = image.drawRect(im1, anno[{1}], anno[{2}], anno[{1}]+1, anno[{2}]+1)
-		display = image.drawRect(display, anno[{3}], anno[{4}], anno[{3}]+1, anno[{4}]+1)
-		display = image.drawRect(display, anno[{5}], anno[{6}], anno[{5}]+1, anno[{6}]+1)
-		display = image.drawRect(display, anno[{7}], anno[{8}], anno[{7}]+1, anno[{8}]+1)
-		display = image.drawRect(display, anno[{9}], anno[{10}], anno[{9}]+1, anno[{10}]+1)
-		image.save('test/' .. k ..'.png', display)
-		]]--
-
 		-- bias ver.
 		local im = self:load_im(iid)
 		local anno = self:load_anno(iid)
@@ -179,10 +147,6 @@ function DataLoaderReg:get_batch(batchsize)
 		g_matrix[{k, {}, {}}] = image.scale(warpfield1, 40, 40):div(84.0/40)
 		annotation[{k, {}}] = anno
 	end
-
-	-- normalize batch images.
-	--batch1 = self:normalize(batch1)
-	--batch2 = self:normalize(batch2)
 
 	table.insert(data, {batch1, batch2, g_matrix, annotation})
 	return data
@@ -198,23 +162,6 @@ function DataLoaderReg:get_sample(trgidx)
 	local anno = self:load_anno(trgidx)
 	im = self:transform(im)
 
---[[
-	-- no-bias ver.
-	im1, warpfield1 = self:warp(im, idx1)
-	im2, warpfield2 = self:warp(im1, idx2)
-	anno = self:adjust_anno(anno, warpfield1)
-	g_matrix = image.scale(warpfield2, 40, 40):div(2)
-	im1 = torch.repeatTensor(im1, 1, 1, 1, 1)
-	im2 = torch.repeatTensor(im2, 1, 1, 1, 1)
-	g_matrix = torch.repeatTensor(g_matrix, 1, 1, 1, 1)
-	anno = torch.repeatTensor(anno, 1, 1)
-	return {im1, im2, g_matrix, anno}
-]]--
-	
-	-- normalize batch images.
-	--im1 = self:normalize(im1)
-	--im2 = self:normalize(im2)
-	
 	-- bias ver.
 	im1, warpfield1 = self:warp(im, idx1)
 	anno = self:adjust_anno(anno, warpfield1)
