@@ -91,7 +91,7 @@ if __name__ == "__main__":
 	
 	# options
 	parser.add_argument('--sampleSize', default=84, type=int, help='image width/height for resize.')
-	parser.add_argument('--tpslen', default=100, type=int, help='# of warpfields for pre-calculation.')
+	parser.add_argument('--tpslen', default=1000, type=int, help='# of warpfields for pre-calculation.')
 
 
 	args = parser.parse_args()

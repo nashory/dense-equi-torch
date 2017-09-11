@@ -1,3 +1,6 @@
 #! /bin/bash
 
-th script/pretrain.lua
+#if [ $1 = 'pretrain' ] 
+#then
+	th script/__01_pretrain.lua
+#fi

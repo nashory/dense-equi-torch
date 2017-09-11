@@ -24,6 +24,8 @@ function M.parse(arg)
 	cmd:option('-start_from', 'EXP5/3-conv_Iter10130', 'model name to restart training.')
 	cmd:option('-restart', false, 'if you want to restart from specified model, change is to true.')
 	cmd:option('-name', 'EXP1', 'experiment name.')
+	cmd:option('-mode', 'pretrain', 'pretrain/regerssor.')
+
 	
 
 	---------------- Display server -----------------
@@ -43,19 +45,27 @@ function M.parse(arg)
 	cmd:option ('-tps_h5', 'prepro/save/tps.h5', 'tps file path to generate')
 	cmd:option('-name', 'simple-conv', 'experiment name')
 
-
 	cmd:option('-nc', 3, '# of image channels')
 	cmd:option('-sampleSize', 84, 'crop size.')
 	cmd:option('-loadSize', 96, 'load size.')
 	cmd:option('-outputSize', 40, 'output feature map size.')
-
-
 
 	-------------- Training options---------------
 	cmd:option('-batchSize', 40, 'batch size for training')
 	cmd:option('-lr', 0.0005, 'learning rate')
 	cmd:option('-momentum', 0.997, 'momentum')
 	cmd:option('-weight_decay', 0.05, 'weigth decay')
+
+
+	-------------- Regressor training options --------------
+	cmd:option('-pretrain_modelIter', 50000, 'batch size for training')
+	cmd:option('-regressor_modelIter', 12000, 'batch size for training')
+	cmd:option('-expName', 'EXP1', 'batch size for training')
+	
+
+
+
+
 	cmd:text()
 
 	-- return opt.

@@ -31,7 +31,6 @@ if opt.gpuid >=0 then
 	cutorch.setDevice(opt.gpuid+1)
 end
 
-
 -- create dataloader.
 local loader = paths.dofile('../data/data.lua')
 

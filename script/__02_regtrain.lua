@@ -3,15 +3,10 @@
 
 
 require 'torch'
-require 'cutorch'
-require 'cudnn'
-require 'cunn'
 require 'optim'
-require 'nn'
 require 'layers.DataLoaderReg'
 require 'layers.SpatialGridSrch'
-require 'misc.trainer'
-require 'gnuplot'
+require 'script.trainer'
 local opts = require 'misc.opts'
 
 -- basic settings.
@@ -25,9 +20,9 @@ local loader = DataLoaderReg{data_t7 = opt.data_t7, img_h5 = opt.img_h5, data_js
 
 -------------------- GET FEATURE FROM PRETRIANED MODEL ------------------------------
 -- load pretrained model
-local model_num =60780			-- EXP1: 55726, EXP2: 7599, EXP3: 81040, EXP4:10130, EXP5:60780
-local exp = 'EXP5'
-local model_path = 'repo/pretrain/' .. exp  .. '/3-conv_Iter' .. model_num .. '.t7'
+local model_num = opt.pretrain_modelIter			-- EXP1: 55726, EXP2: 7599, EXP3: 81040, EXP4:10130, EXP5:60780
+local exp = opt.expName
+local model_path = 'repo/pretrain/' .. exp  .. '/'.. exp  ..'_Iter' .. model_num .. '.t7'
 local pretrain_model = torch.load(model_path)
 local model = pretrain_model['model']
 model:evaluate()
@@ -42,13 +37,10 @@ local channel = 3
 local units = 4			-- units per each grid section.
 local grid = 5			-- total points = grid x grid x units
 local ndim = 40
-local batchsize = opt.batch_size
+local batchsize = opt.batchSize
 local reg = nn.Sequential()
 
---units = 800
--- 1-th layer
---reg:add(nn.GridUnit(units))
---reg:add(nn.Linear(channel*units, 256, false))
+-- 1-st layer
 reg:add(nn.SpatialGridSrch(grid, units))
 reg:add(nn.Linear(channel*grid*grid*units, 256, true))
 reg:add(nn.BatchNormalization(256))
@@ -58,7 +50,6 @@ reg:add(nn.ReLU(true))
 reg:add(nn.Linear(256, 32, true))
 reg:add(nn.BatchNormalization(32))
 reg:add(nn.ReLU(true))
---reg:add(nn.Dropout(0.8))
 
 -- 3-rd layer
 reg:add(nn.Linear(32, 10, true))
@@ -70,7 +61,6 @@ crit:cuda()
 
 ----------------------------- FORWARD AND BACKWARD / UPDATE PARAMS -------------------
 -- get model parameters
---self.params, self.gradParams = reg:getParameters()
 local params, gradParams = reg:getParameters()
 local optim_state = {}
 
@@ -113,15 +103,12 @@ for epoch = 1, epoch do
 		local input = {feature[1]:cuda(), feature[2]:cuda(), data[3]:cuda()}
 		local predict = reg:forward(input)
 		local loss = crit:forward(predict, data[4]:cuda())
-		--local loss = crit:forward(predict, data[4][{{},{9,10}}]:cuda())
 		local avg_loss = loss/opt.batch_size
-		--local avg_loss = loss
 		local loss_history, avg_loss_f = avg_filter(loss_history, avg_loss, 5)
 	
 		-- backward
 		reg:zeroGradParameters()
 		local d_crit = crit:backward(predict, data[4]:cuda())
-		--local d_crit = crit:backward(predict, data[4][{{},{9,10}}]:cuda())
 		local d_dummy = reg:backward(input, d_crit)
 
 		-- update params
