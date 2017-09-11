@@ -27,18 +27,12 @@ end
 
 function DataLoaderReg:__init(opt)
 
-	-- load training image and ldmk annotations from .t7
-	print('Loading image dataset... ' .. opt.data_t7 .. '  (this may take several mins.)')
-	self.dataset = torch.load(opt.data_t7)
-	self.batchsize = opt.batch_size
-
-	-- load json, h5
-	print('Loading json,h5 files... ' .. opt.data_json .. '  '  .. opt.data_h5)
-	local json_file = utils.read_json(opt.data_json)
-	self.dbsize = json_file._dbsize
-	self.imsize = json_file._imsize
-	self.imlen = json_file._imlen
-	self.cropsize = math.ceil(self.imsize*(1.0-1/8.0))
+	-- create and load train/test image and ldmk annotations
+	paths.dofile('../data/gen_reg.lua')
+	print('Loading image dataset ... (this may take several mins.)')
+	self.trainset = torch.load('../data/save/reg_train.t7')
+	self.testset = torch.load('../data/save/reg_train.t7')
+	self.batchsize = opt.batchSize
 
 	-- tps warp matrix(g).
 	local h5_file = hdf5.open('data/save/tps.h5')
@@ -78,21 +72,6 @@ function DataLoaderReg:load_anno(iid)
 	return anno
 end
 
--- Note that this is function calcuates mean/std per channel based on 1 batch.
-function DataLoaderReg:normalize(data)
-	local mean = {}
-	local std = {}
-	local channel = {'r','g','b'}
-	for i, ch  in ipairs(channel) do
-		-- normalize each channel globally.
-		mean[i] = data[{{},i,{},{}}]:mean()
-		std[i] = data[{{},i,{},{}}]:std()
-		data[{{},i,{},{}}]:add(-mean[i])
-		data[{{},i,{},{}}]:div(std[i])
-	end
-
-	return data
-end
 
 function DataLoaderReg:warp(im, idx)
 	local warpfield = torch.DoubleTensor(2, self.cropsize, self.cropsize)

@@ -31,7 +31,7 @@ local loader = DataLoaderReg{data_t7 = opt.data_t7, img_h5 = opt.img_h5, data_js
 
 -------------------- GET FEATURE FROM PRETRIANED MODEL ------------------------------
 -- load pretrained model
-local model_num = opt.pretrain_modelIter		-- EXP1: 55726, EXP2: 7599, EXP3: 81040, EXP4: 10130, EXP5: 60780
+local model_num = opt.pretrain_modelIter
 local model_iter = opt.regressor_modelIter
 local exp = 'EXP5'
 local model_path = 'repo/pretrain/' .. exp  .. '/3-conv_Iter' .. model_num .. '.t7'
