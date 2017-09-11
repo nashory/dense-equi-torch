@@ -11,6 +11,10 @@ Threads.serialization('threads.sharedserialize')
 
 local DataLoaderReg = torch.class('DataLoaderReg')
 
+local opts = require 'script.opts'
+local opt = opts.parse(arg)
+
+
 -- for random # generation
 math.randomseed(os.time())
 
@@ -28,7 +32,6 @@ function DataLoaderReg:__init(opt)
 	self.dataset = torch.load(opt.data_t7)
 	self.batchsize = opt.batch_size
 
-
 	-- load json, h5
 	print('Loading json,h5 files... ' .. opt.data_json .. '  '  .. opt.data_h5)
 	local json_file = utils.read_json(opt.data_json)
@@ -36,8 +39,9 @@ function DataLoaderReg:__init(opt)
 	self.imsize = json_file._imsize
 	self.imlen = json_file._imlen
 	self.cropsize = math.ceil(self.imsize*(1.0-1/8.0))
-	
-	local h5_file = hdf5.open(opt.data_h5)
+
+	-- tps warp matrix(g).
+	local h5_file = hdf5.open('data/save/tps.h5')
 	self.wfx = h5_file:read('/_wfx'):all()
 	self.wfy = h5_file:read('/_wfy'):all()
 end
