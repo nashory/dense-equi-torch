@@ -163,7 +163,7 @@ function Trainer:snapshot(path, fname, iter, data)
 	local iter_per_epoch = math.ceil(self.dataset:size()/self.batchSize)
 	if iter % math.ceil(self.opt.snapshot_every*iter_per_epoch) == 0 then
 		local save_path = path .. '/' .. fname
-		torch.save(save_path)
+		torch.save(save_path, data)
 		print(string.format('[snapshot]: saved model @$s', save_path))
 	end
 end

@@ -18,20 +18,15 @@ local opt = opts.parse(arg)
 -- for random # generation
 math.randomseed(os.time())
 
--- create data loader.
-function DataLoaderReg:create(opt)
-	local loader = M.DataLoaderReg(opt)
-	return loader
-end
 
 
-function DataLoaderReg:__init(opt)
+function DataLoaderReg:__init()
 
 	-- create and load train/test image and ldmk annotations
 	paths.dofile('../data/gen_reg.lua')
 	print('Loading image dataset ... (this may take several mins.)')
-	self.trainset = torch.load('../data/save/reg_train.t7')
-	self.testset = torch.load('../data/save/reg_train.t7')
+	self.trainset = torch.load('data/save/reg_train.t7')
+	self.testset = torch.load('data/save/reg_test.t7')
 	self.batchsize = opt.batchSize
 
 	-- tps warp matrix(g).

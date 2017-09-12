@@ -24,14 +24,14 @@ function M.parse(arg)
 	cmd:option('-start_from', 'EXP5/3-conv_Iter10130', 'model name to restart training.')
 	cmd:option('-restart', false, 'if you want to restart from specified model, change is to true.')
 	cmd:option('-name', 'EXP1', 'experiment name.')
-	cmd:option('-mode', 'pretrain', 'pretrain/regerssor.')
+	cmd:option('-mode', 'regtrain', 'pretrain/regtrain/regtest.')
 
 	
 
 	---------------- Display server -----------------
 	cmd:option('-display', true, 'true: display server on / false: off')
 	cmd:option('-display_id', 5, 'display window id')
-	cmd:option('-display_iter', 10, 'display every xx iter.')
+	cmd:option('-display_iter', 20, 'display every xx iter.')
 	cmd:option('-display_server_ip', '10.64.81.227', 'host server ip')
 	cmd:option('-display_server_port', '8000', 'host server port number')
 	cmd:option('-display_server_name', 'nashory', 'server name.')
@@ -43,9 +43,9 @@ function M.parse(arg)
 
 	----------------- Generating tps matrix ----------
 	cmd:option ('-tps_h5', 'prepro/save/tps.h5', 'tps file path to generate')
-	cmd:option('-name', 'simple-conv', 'experiment name')
 
 	cmd:option('-nc', 3, '# of image channels')
+    --cmd:option('-nf')
 	cmd:option('-sampleSize', 84, 'crop size.')
 	cmd:option('-loadSize', 96, 'load size.')
 	cmd:option('-outputSize', 40, 'output feature map size.')
@@ -57,10 +57,10 @@ function M.parse(arg)
 	cmd:option('-weight_decay', 0.05, 'weigth decay')
 
 
-	-------------- Regressor training options --------------
-	cmd:option('-pretrain_modelIter', 50000, 'batch size for training')
+	-------------- Regressor train/test options --------------
+	cmd:option('-pretrain_modelIter', 10130, 'batch size for training')
 	cmd:option('-regressor_modelIter', 12000, 'batch size for training')
-	cmd:option('-expName', 'EXP1', 'batch size for training')
+	cmd:option('-targName', 'EXP1', 'target exp model name to use for feature extraction')
 	
 
 

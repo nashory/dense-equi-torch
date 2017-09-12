@@ -83,7 +83,6 @@ end
 
 
 -- File I/O
--- %%% recursive 하게 폴더 생성해 주는 기능 추가해야 됨.
 function utils.mkdir(path)
 	lfs.mkdir(path)
 end

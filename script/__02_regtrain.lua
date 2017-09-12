@@ -7,7 +7,7 @@ require 'optim'
 require 'layers.DataLoaderReg'
 require 'layers.SpatialGridSrch'
 require 'script.trainer'
-local opts = require 'misc.opts'
+local opts = require 'script.opts'
 
 -- basic settings.
 torch.setdefaulttensortype('torch.FloatTensor')
@@ -15,28 +15,23 @@ torch.setnumthreads(1)
 
 local opt = opts.parse(arg)
 
-local loader = DataLoaderReg{data_t7 = opt.data_t7, img_h5 = opt.img_h5, data_json = opt.data_json, data_h5 = opt.data_h5, batch_size = opt.batch_size}
+local loader = DataLoaderReg()
 
 
--------------------- GET FEATURE FROM PRETRIANED MODEL ------------------------------
--- load pretrained model
-local model_num = opt.pretrain_modelIter			-- EXP1: 55726, EXP2: 7599, EXP3: 81040, EXP4:10130, EXP5:60780
-local exp = opt.expName
+-- forward pretrained model.
+local model_num = opt.pretrain_modelIter
+local exp = opt.targName
 local model_path = 'repo/pretrain/' .. exp  .. '/'.. exp  ..'_Iter' .. model_num .. '.t7'
 local pretrain_model = torch.load(model_path)
 local model = pretrain_model['model']
+model:cuda()
 model:evaluate()
 
 
-
-
-
--------------------- DEFINE NETWORK FOR REGRESSION  ------------------------------
--- define network (3-layered fully connected)
+-- network structure for regression (mlp)
 local channel = 3
 local units = 4			-- units per each grid section.
 local grid = 5			-- total points = grid x grid x units
-local ndim = 40
 local batchsize = opt.batchSize
 local reg = nn.Sequential()
 
@@ -45,22 +40,19 @@ reg:add(nn.SpatialGridSrch(grid, units))
 reg:add(nn.Linear(channel*grid*grid*units, 256, true))
 reg:add(nn.BatchNormalization(256))
 reg:add(nn.ReLU(true))
-
 -- 2-nd layer
 reg:add(nn.Linear(256, 32, true))
 reg:add(nn.BatchNormalization(32))
 reg:add(nn.ReLU(true))
-
 -- 3-rd layer
 reg:add(nn.Linear(32, 10, true))
-
 -- MSE Criterion
 local crit = nn.MSECriterion()
 reg:cuda()
 crit:cuda()
 
------------------------------ FORWARD AND BACKWARD / UPDATE PARAMS -------------------
--- get model parameters
+
+-- forward and backward
 local params, gradParams = reg:getParameters()
 local optim_state = {}
 
@@ -103,8 +95,7 @@ for epoch = 1, epoch do
 		local input = {feature[1]:cuda(), feature[2]:cuda(), data[3]:cuda()}
 		local predict = reg:forward(input)
 		local loss = crit:forward(predict, data[4]:cuda())
-		local avg_loss = loss/opt.batch_size
-		local loss_history, avg_loss_f = avg_filter(loss_history, avg_loss, 5)
+		local loss_history, avg_loss = avg_filter(loss_history, loss/opt.batchSize, 5)
 	
 		-- backward
 		reg:zeroGradParameters()
@@ -113,11 +104,12 @@ for epoch = 1, epoch do
 
 		-- update params
 		rmsprop(params, gradParams, lr, 0.99, 1e-8, optim_state)
-		print('['.. cnt  ..']' .. '  Epoch : ' .. epoch .. '  Iter : ' .. iter .. '  Loss : ' .. avg_loss_f)
+        print(string.format('[%d]\tEpoch:%d\tIter:%d\tLoss:.4f', cnt, epoch, iter, avg_loss))
 
 		-- savesnapshot
 		if (cnt % snapshot_every == 0 and cnt >= 50) then
-			local save_path = 'repo/regressor/reg_M'.. model_num .. 'Iter' .. cnt .. '.t7'
+            os.execute('mkdir -p repo/regressor/' .. opt.expName)
+			local save_path = 'repo/regressor/reg_P'.. model_num .. '_R' .. cnt .. '.t7'
 			torch.save(save_path, reg)
 		end
 
