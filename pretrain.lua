@@ -32,7 +32,7 @@ if opt.gpuid >=0 then
 end
 
 -- create dataloader.
-local loader = paths.dofile('../data/data.lua')
+local loader = paths.dofile('data/data.lua')
 
 -- model and criterion --
 if (opt.restart) then
