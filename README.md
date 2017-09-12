@@ -1,5 +1,5 @@
 # dense\_equivariant.torch
-Torch7 implementation of "Unsupervised object learning from dense equivariant image labelling"
+Torch7 implementation of ["Unsupervised object learning from dense equivariant image labelling"](https://arxiv.org/abs/1706.02932)
 
 
 
@@ -19,24 +19,24 @@ loarocks install xlua
 
 
 # Usage
-first, download CelebA dataset[here](https://drive.google.com/drive/folders/0B7EVK8r0v71pWEZsZE9oNnFzTm8).
+first, download CelebA dataset [(here)](https://drive.google.com/drive/folders/0B7EVK8r0v71pWEZsZE9oNnFzTm8).
 ~~~
 <data_path>
-			|-- image 1
-			|-- image 2
-			|-- iamge 3 ...
+           |-- image 1
+           |-- image 2
+           |-- iamge 3 ...
 ~~~
 
 To train the feature extractor(CNN):
 ~~~
-1. change options in "script/opts.lua" and "data/gen\_tps.py"
+1. change options in "script/opts.lua" and "data/gen_tps.py"
 2. do "th pretrain.lua"
 >> pretrained model will saved in 'repo/pretrain/'
 ~~~
 
 To train the regressor(mlp):
 ~~~
-1. change options in "script/opts.lua" and "data/gen\_reg.lua"
+1. change options in "script/opts.lua" and "data/gen_reg.lua"
 2. do "th regtrain.lua"
 >> trained regressor will saved in 'repo/regressor/'
 ~~~
