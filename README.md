@@ -52,9 +52,25 @@ To test the regressor(mlp):
 
 
 # Results
-will be updated soon.
 
-## (1) landmark detection on CelebA
+### (1) mapping on the latent space
+  + Red : left-mouth
+  + Purple : right-mouth
+  + Green : nose
+  + Blue : left-eye
+  + Orange : right-eye
+
+
+(https://plot.ly/~stellastra666/156/)   
+(https://plot.ly/~stellastra666/162/)
+
+![이미지1](https://puu.sh/x6mIs/8cb7ee71c9.png) 
+![이미지1](https://puu.sh/x9uGm/12e5061271.png)
+
+
+
+
+### (2) landmark detection on CelebA
 
 1. good case (red: predict / green: GT)
 
@@ -78,7 +94,7 @@ will be updated soon.
 ![이미지](https://puu.sh/x9E9a/eb7b5d3f29.png)
 ![이미지](https://puu.sh/x9E91/d765dec3a1.png)
 
-## (2) Performance Benchmark
+### (3) Performance Benchmark
 
 __1. Original paper__
 
@@ -95,7 +111,7 @@ __2. My code__
 |100|CelebA|5K|      3.15|5.71|
 |100|CelebA|50K|      3.31|5.67|
 
-## (3) Effect of training data when fine-tuning regressor(mlp)
+### (4) Effect of training data when fine-tuning regressor(mlp)
 
 |Training images| learning iter | training loss | MSE | IOD error|
 |---|---|---|---|---|
