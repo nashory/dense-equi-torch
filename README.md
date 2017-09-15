@@ -54,7 +54,7 @@ To test the regressor(mlp):
 # Results
 will be updated soon.
 
-## landmark detection on CelebA
+## (1) landmark detection on CelebA
 
 1. good case (red: predict / green: GT)
 
@@ -78,7 +78,7 @@ will be updated soon.
 ![이미지](https://puu.sh/x9E9a/eb7b5d3f29.png)
 ![이미지](https://puu.sh/x9E91/d765dec3a1.png)
 
-## Performance Benchmark
+## (2) Performance Benchmark
 
 __1. Original paper__
 
@@ -95,7 +95,7 @@ __2. My code__
 |100|CelebA|5K|      3.15|5.71|
 |100|CelebA|50K|      3.31|5.67|
 
-## Effect of training data when fine-tuning regressor(mlp)
+## (3) Effect of training data when fine-tuning regressor(mlp)
 
 |Training images| learning iter | training loss | MSE | IOD error|
 |---|---|---|---|---|
@@ -106,6 +106,9 @@ __2. My code__
 | 5000 | 3K | 0.20 |3.36  | 5.84  |
 | 15000 | 5K | 0.21 |3.15  | 5.71  |
 | 15000 | 50K | 0.21 |3.31  | 5.67  |
+
+# ACKNOWLEDGEMENT
+Thank James for kindly answering my inquries and providing pieces of matlab code :)
 
 
 # Author
