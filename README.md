@@ -1,4 +1,4 @@
-# dense\_equivariant.torch
+# dense-equi-torch
 Torch7 implementation of ["Unsupervised object learning from dense equivariant image labelling"](https://arxiv.org/abs/1706.02932)
 
 ___Note: I am working on training/test regressor code to make cleaner version.___  
