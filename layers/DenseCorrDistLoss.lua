@@ -18,7 +18,7 @@ function DenseCorrDistLoss:meshgrid(w)
 	for i = 1, w do
 		mesh[{{},{},i}] = torch.CudaTensor(2,w):fill(i)
 	end
-	mesh[{1,{},{}}] = mesh[{1,{},{}}]:transpose(2,1)
+	mesh[{1,{},{}}] = mesh[{1,{},{}}]:clone():transpose(2,1)
 	-- mesh : 2 x self.H x self.W
 	return mesh
 end
